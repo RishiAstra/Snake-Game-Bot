@@ -2,7 +2,7 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-
+//TODO: make a new thread that runs the game loop, this will make the map panel work
 public class Main {
     public static final int FIELD_SIZE_X = 17;
     public static final int FIELD_SIZE_Y = 15;
@@ -26,10 +26,6 @@ public class Main {
     private static Window overlayWindow;
     public static void main(String[] args) {
         //setup a main window for organizational purposes.
-        mapFrame = new MapFrame();
-//        mapFrame.setSize(FIELD_SIZE_X * 10, FIELD_SIZE_Y * 10);
-//        TextArea mainFrameInfo = new TextArea("This is the main window for AutoStuff. This software is meant to automate the snake game.");
-//        mapFrame.add(mainFrameInfo);
         screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         try {
             robot = new Robot();
@@ -55,6 +51,7 @@ public class Main {
         }catch(Exception e){
             System.out.println(e);
         }
+
     }
 
     public static void MouseClicked(MouseEvent e){
@@ -72,12 +69,32 @@ public class Main {
                 readyForClicks = false;
                 boundsWindow.remove(click2);
                 SetupPlay();
+                while(true){
+                    try{
+                        readPlayingField(true);
+                        for(int yy = 0; yy < FIELD_SIZE_Y;yy++){
+                            for(int xx = 0; xx < FIELD_SIZE_X;xx++) {
+                                if(map[yy][xx] == 2 && oldMap[yy][xx] != 2){
+                                    playerX = xx;
+                                    playerY = yy;
+                                }
+                            }
+                        }
+                        Move();
+                        Thread.sleep(50);
+                    }catch (Exception ee){
+                        ee.printStackTrace();
+                    }
+                }
             }
         }
 
     }
     public static void SetupPlay(){
         boundsWindow.dispose();
+//        mapFrame = new MapFrame();
+        Test test = new Test();
+        test.main1(null);
         Window overlayWindow = new Window(mapFrame)
         {
             @Override
@@ -104,24 +121,24 @@ public class Main {
         overlayWindow.setFocusable(false);
         overlayWindow.setAlwaysOnTop(true);
         overlayWindow.setVisible(true);
-        readPlayingField(false);
-        while(true){
-            try{
-                readPlayingField(true);
-                for(int yy = 0; yy < FIELD_SIZE_Y;yy++){
-                    for(int xx = 0; xx < FIELD_SIZE_X;xx++) {
-                        if(map[yy][xx] == 2 && oldMap[yy][xx] != 2){
-                            playerX = xx;
-                            playerY = yy;
-                        }
-                    }
-                }
-                Move();
-                Thread.sleep(50);
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-        }
+//        readPlayingField(false);
+//        while(true){
+//            try{
+//                readPlayingField(true);
+//                for(int yy = 0; yy < FIELD_SIZE_Y;yy++){
+//                    for(int xx = 0; xx < FIELD_SIZE_X;xx++) {
+//                        if(map[yy][xx] == 2 && oldMap[yy][xx] != 2){
+//                            playerX = xx;
+//                            playerY = yy;
+//                        }
+//                    }
+//                }
+////                Move();
+//                Thread.sleep(50);
+//            }catch (Exception e){
+//                e.printStackTrace();
+//            }
+//        }
     }
 
 
@@ -170,7 +187,7 @@ public class Main {
                 map[yy][xx] = type;
             }
         }
-        System.out.println("Read map");
+//        System.out.println("Read map");
     }
 
     public static void Move(){
