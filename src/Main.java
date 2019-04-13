@@ -26,6 +26,7 @@ public class Main {
     private static Window boundsWindow;
     private static BufferedImage boundsScreenshot;
     private static Label click1, click2;
+    private static Window overlayWindow;
     public static void main(String[] args) {
         //setup a main window for organizational purposes.
         mainFrame = new Frame("AutoStuff");
@@ -83,7 +84,8 @@ public class Main {
     }
     public static void SetupPlay(){
         boundsWindow.dispose();
-        Window overlayWindow = new Window(mainFrame)
+
+        overlayWindow = new Window(mainFrame)
         {
             @Override
             public void paint(Graphics g)
@@ -109,7 +111,6 @@ public class Main {
         overlayWindow.setFocusable(false);
         overlayWindow.setAlwaysOnTop(true);
         overlayWindow.setVisible(true);
-
         readPlayingField(false);
         while(true){
             try{
@@ -125,7 +126,7 @@ public class Main {
                 Move();
                 Thread.sleep(50);
             }catch (Exception e){
-                System.err.println(e);
+                e.printStackTrace();
             }
         }
     }
@@ -151,25 +152,27 @@ public class Main {
                 int avgB = 0;
                 int[] pixels = img.getRGB((int)Math.floor(xx * w / FIELD_SIZE_X), (int)Math.floor(yy * h / FIELD_SIZE_Y), stepx, stepy, null, 0, stepx);
                 int samples = 0;
-                for(int i = 0;i < pixels.length;i+=Math.round(pixels.length/SAMPLES_PER_GRID)){
+                for(int i = 0;i < pixels.length;i++){//=Math.round(pixels.length/SAMPLES_PER_GRID)){
                     Color temp = new Color(pixels[i]);
                     avgR += temp.getRed();
                     avgG += temp.getGreen();
                     avgB += temp.getBlue();
                     samples++;
                 }
-                avgR = Math.round(avgR/samples);
-                avgG = Math.round(avgG/samples);
-                avgB = Math.round(avgB/samples);
+                avgR = Math.round(avgR/(float)samples);
+                avgG = Math.round(avgG/(float)samples);
+                avgB = Math.round(avgB/(float)samples);
 
-                if(avgR > 128){
-                    type = 2;//apple
-                }
+
                 if(avgG > 128){
                     type = 0;//blank
                 }
                 if(avgB > 128){
                     type = 1;
+                }
+                if(avgR > 128){
+                    type = 2;//apple
+//                    System.out.println("apple found at " + xx + ", " + yy);
                 }
                 map[yy][xx] = type;
             }
@@ -178,13 +181,14 @@ public class Main {
     }
 
     public static void Move(){
-        int rx = -1;
-        int ry = -1;
+        int rx = 10;
+        int ry = 10;
         for(int yy = 0;yy < FIELD_SIZE_Y;yy++){
-            for(int xx = 0;xx < FIELD_SIZE_X;xx++){
+            for(int xx = 0;xx < FIELD_SIZE_X;xx++){//TODO: cant detect apple
                 if(map[yy][xx] == 2){
                     rx = xx;
                     ry = yy;
+                    System.out.println(rx + ", " + ry);
                 }
             }
         }
@@ -200,7 +204,7 @@ public class Main {
         count [ry][rx] = 0;
         xdone.add(rx);
         ydone.add(ry);
-        int done = 0;
+        int done = 1;
         while(done < FIELD_SIZE_X * FIELD_SIZE_Y) {
             ArrayList<Integer> newx = new ArrayList<Integer>();
             ArrayList<Integer> newy = new ArrayList<Integer>();
@@ -283,7 +287,7 @@ public class Main {
         // count map has been made now
 
         int dir = 0;//target direction 0=top, 1=right, 2=bottom, 3=left
-        int score = 1000;//how good is this move
+        int score = 10000;//how good is this move
 
         if(playerY > 0 && count[playerY - 1][playerX] < score){
             dir = 0;
