@@ -1,6 +1,3 @@
-import com.sun.java.swing.plaf.windows.WindowsGraphicsUtils;
-import org.omg.CORBA.Environment;
-
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
@@ -11,8 +8,8 @@ public class Main {
     public static final int FIELD_SIZE_Y = 15;
     public static final int SAMPLES_PER_GRID = 20;// number of samples to get from a square in the grid to determine its color. Lower number increases performance
 
-    public static Frame mainFrame;
-    private static Robot robo;
+    public static MapFrame mapFrame;
+    private static Robot robot;
     private static int x;
     private static int y;
     private static int w;
@@ -20,7 +17,7 @@ public class Main {
     private static int playerX = 3;
     private static int playerY = 7;
     private static Dimension screenSize;
-    private static int[][] map = new int[FIELD_SIZE_Y][FIELD_SIZE_X];
+    public static int[][] map = new int[FIELD_SIZE_Y][FIELD_SIZE_X];
     private static int[][] oldMap = new int[FIELD_SIZE_Y][FIELD_SIZE_X];
     private static boolean readyForClicks, click1done, click2done;
     private static Window boundsWindow;
@@ -29,21 +26,18 @@ public class Main {
     private static Window overlayWindow;
     public static void main(String[] args) {
         //setup a main window for organizational purposes.
-        mainFrame = new Frame("AutoStuff");
-        mainFrame.setSize(400, 200);
-        TextArea mainFrameInfo = new TextArea("This is the main window for AutoStuff. This software is meant to automate the snake game.");
-        mainFrame.add(mainFrameInfo);
-        mainFrame.setState(Frame.ICONIFIED);
-        mainFrame.setVisible(true);
-        System.out.println(Window.getWindows().length);
+        mapFrame = new MapFrame();
+//        mapFrame.setSize(FIELD_SIZE_X * 10, FIELD_SIZE_Y * 10);
+//        TextArea mainFrameInfo = new TextArea("This is the main window for AutoStuff. This software is meant to automate the snake game.");
+//        mapFrame.add(mainFrameInfo);
         screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         try {
-            robo = new Robot();
+            robot = new Robot();
             Thread.sleep(2000);
             int width = (int) Math.round(screenSize.getWidth());
             int height = (int) Math.round(screenSize.getHeight());
-            boundsScreenshot = robo.createScreenCapture(new Rectangle(0, 0, width, height));
-            boundsWindow = new Window(mainFrame);
+            boundsScreenshot = robot.createScreenCapture(new Rectangle(0, 0, width, height));
+            boundsWindow = new Window(mapFrame);
             boundsWindow.setLocation(0, 0);
             boundsWindow.setSize(width, height);
             boundsWindow.setAlwaysOnTop(true);
@@ -84,8 +78,7 @@ public class Main {
     }
     public static void SetupPlay(){
         boundsWindow.dispose();
-
-        overlayWindow = new Window(mainFrame)
+        Window overlayWindow = new Window(mapFrame)
         {
             @Override
             public void paint(Graphics g)
@@ -141,7 +134,7 @@ public class Main {
             }
         }
 
-        BufferedImage img = robo.createScreenCapture(new Rectangle(x, y, w, h));
+        BufferedImage img = robot.createScreenCapture(new Rectangle(x, y, w, h));
         int stepx = (int)Math.floor(((double)w)/FIELD_SIZE_X);
         int stepy = (int)Math.floor(((double)h)/FIELD_SIZE_Y);
         for(int yy = 0; yy < FIELD_SIZE_Y;yy++){
@@ -305,14 +298,14 @@ public class Main {
             dir = 3;
             score = count[playerY][playerX - 1];
         }
-        robo.keyRelease(37);
-        robo.keyRelease(38);
-        robo.keyRelease(39);
-        robo.keyRelease(40);
-        if(dir == 0) robo.keyPress(38);
-        if(dir == 1) robo.keyPress(39);
-        if(dir == 2) robo.keyPress(40);
-        if(dir == 3) robo.keyPress(37);
+        robot.keyRelease(37);
+        robot.keyRelease(38);
+        robot.keyRelease(39);
+        robot.keyRelease(40);
+        if(dir == 0) robot.keyPress(38);
+        if(dir == 1) robot.keyPress(39);
+        if(dir == 2) robot.keyPress(40);
+        if(dir == 3) robot.keyPress(37);
     }
     public static void loop(){
 
