@@ -1,18 +1,12 @@
-public class UpdateMap implements Runnable{
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class UpdateMap implements ActionListener {
     @Override
-    public void run(){
-        while(true){
-            try {
-                Thread.sleep(50);
-//                frame.invalidate();
-//                frame.validate();
-//                frame.repaint();
-                Main.test.invalidate();
-                Main.test.validate();
-                Main.test.repaint();//TODO: update map repaint
-            }catch (Exception e){
-                System.err.println(e);
-            }
+    public void actionPerformed(ActionEvent e){
+        if(e.getSource() == Main.updateMapThread){
+            Main.test.repaint();
+            Main.test.frame.repaint();
         }
     }
 }

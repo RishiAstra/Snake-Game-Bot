@@ -3,6 +3,12 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 public class PlayGame implements Runnable{
+
+    public static int[][] count = new int[Main.FIELD_SIZE_Y][Main.FIELD_SIZE_X];
+    public static int rx;
+    public static int ry;
+    public static int dir;
+    public static int moveCount;
     @Override
     public void run(){
         while(true){
@@ -17,20 +23,14 @@ public class PlayGame implements Runnable{
                     }
                 }
                 Move();
-                Thread.sleep(50);
+                moveCount++;
+                Thread.sleep(30);
             }catch (Exception ee){
                 ee.printStackTrace();
             }
         }
     }
     public static void readPlayingField(boolean updateOldMap){
-        if(updateOldMap){
-            for(int yy = 0; yy < Main.FIELD_SIZE_Y;yy++){
-                for(int xx = 0; xx < Main.FIELD_SIZE_X;xx++) {
-                    Main.oldMap[yy][xx] = Main.map[yy][xx];
-                }
-            }
-        }
 
         BufferedImage img = Main.robot.createScreenCapture(new Rectangle(Main.x, Main.y, Main.w, Main.h));
         int stepx = (int)Math.floor(((double)Main.w)/Main.FIELD_SIZE_X);
@@ -53,38 +53,75 @@ public class PlayGame implements Runnable{
                 avgR = Math.round(avgR/(float)samples);
                 avgG = Math.round(avgG/(float)samples);
                 avgB = Math.round(avgB/(float)samples);
+//                int min = avgR;
+//                if(avgG < min) min = avgG;
+//                if(avgB < min) min = avgB;
+//                avgR -= min;
+//                avgG -= min;
+//                avgB -= min;
 
+//
+//                if(avgG > 50){
+//                    type = 0;//blank
+//                }
+//                if(avgB > 50){
+//                    type = 1;
+//                }
+//                if(avgR > 50){
+//                    type = 2;//apple
+////                    System.out.println("apple found at " + xx + ", " + yy);
+//                }
 
-                if(avgG > 128){
-                    type = 0;//blank
-                }
-                if(avgB > 128){
+                type = 0;
+                if(avgB > avgG){
                     type = 1;
                 }
-                if(avgR > 175){
-                    type = 2;//apple
-//                    System.out.println("apple found at " + xx + ", " + yy);
+                if(avgR > avgB && avgR > avgG){
+                    type = 2;
                 }
                 Main.map[yy][xx] = type;
+            }
+        }
+        for(int yy = 0; yy < Main.FIELD_SIZE_Y;yy++){
+            for(int xx = 0; xx < Main.FIELD_SIZE_X;xx++) {
+                if(Main.map[yy][xx] == 1 && Main.oldMap[yy][xx] != 1){
+                    Main.playerX = xx;
+                    Main.playerY = yy;
+                }
+            }
+        }
+
+        if(updateOldMap){
+            for(int yy = 0; yy < Main.FIELD_SIZE_Y;yy++){
+                for(int xx = 0; xx < Main.FIELD_SIZE_X;xx++) {
+                    Main.oldMap[yy][xx] = Main.map[yy][xx];
+                }
             }
         }
 //        System.out.println("Read map");
     }
 
     public static void Move(){
-        int rx = 10;
-        int ry = 10;
+        rx = 10;
+        ry = 10;
+        int done = 0;
+
         for(int yy = 0;yy < Main.FIELD_SIZE_Y;yy++){
-            for(int xx = 0;xx < Main.FIELD_SIZE_X;xx++){//TODO: cant detect apple
+            for(int xx = 0;xx < Main.FIELD_SIZE_X;xx++){
                 if(Main.map[yy][xx] == 2){
                     rx = xx;
                     ry = yy;
-                    System.out.println(rx + ", " + ry);
+                    done++;
+//                    System.out.println(rx + ", " + ry);
+                }
+                if(Main.map[yy][xx] == 1){
+                    done++;
+//                    System.out.println(rx + ", " + ry);
                 }
             }
         }
 
-        int[][] count = new int[Main.FIELD_SIZE_Y][Main.FIELD_SIZE_X];
+        count = new int[Main.FIELD_SIZE_Y][Main.FIELD_SIZE_X];
         for(int yy = 0;yy < Main.FIELD_SIZE_Y;yy++){
             for(int xx = 0;xx < Main.FIELD_SIZE_X;xx++){
                 count[yy][xx] = 1000;
@@ -95,7 +132,6 @@ public class PlayGame implements Runnable{
         count [ry][rx] = 0;
         xdone.add(rx);
         ydone.add(ry);
-        int done = 1;
         while(done < Main.FIELD_SIZE_X * Main.FIELD_SIZE_Y) {
             ArrayList<Integer> newx = new ArrayList<Integer>();
             ArrayList<Integer> newy = new ArrayList<Integer>();
@@ -105,34 +141,20 @@ public class PlayGame implements Runnable{
                 boolean bottom = ydone.get(i) < Main.FIELD_SIZE_Y - 1;
                 boolean left = xdone.get(i) > 0;
                 boolean right = xdone.get(i) < Main.FIELD_SIZE_X - 1;
-                /////////////////////// top left 1
-                int xxx = xdone.get(i) - 1;
-                int yyy = ydone.get(i) - 1;
-                if(top && left && count[yyy][xxx] > num){
-                    count[yyy][xxx] = num;
-                    newx.add(xxx);
-                    newy.add(yyy);
-                }
+
                 /////////////////////// top middle 2
-                xxx = xdone.get(i);
-                yyy = ydone.get(i) - 1;
-                if(top && count[yyy][xxx] > num){
+                int xxx = xdone.get(i);
+                int yyy = ydone.get(i) - 1;
+                if (Main.map[yyy][xxx] != 1 && top && count[yyy][xxx] > num) {
                     count[yyy][xxx] = num;
                     newx.add(xxx);
                     newy.add(yyy);
                 }
-                /////////////////////// top right 3
-                xxx = xdone.get(i) + 1;
-                yyy = ydone.get(i) - 1;
-                if(top && right && count[yyy][xxx] > num){
-                    count[yyy][xxx] = num;
-                    newx.add(xxx);
-                    newy.add(yyy);
-                }
+
                 /////////////////////// middle left 4
                 xxx = xdone.get(i) - 1;
                 yyy = ydone.get(i);
-                if(left && count[yyy][xxx] > num){
+                if (Main.map[yyy][xxx] != 1 && left && count[yyy][xxx] > num) {
                     count[yyy][xxx] = num;
                     newx.add(xxx);
                     newy.add(yyy);
@@ -140,15 +162,7 @@ public class PlayGame implements Runnable{
                 /////////////////////// middle right 5
                 xxx = xdone.get(i) + 1;
                 yyy = ydone.get(i);
-                if(right && count[yyy][xxx] > num){
-                    count[yyy][xxx] = num;
-                    newx.add(xxx);
-                    newy.add(yyy);
-                }
-                /////////////////////// bottom left 6
-                xxx = xdone.get(i) - 1;
-                yyy = ydone.get(i) + 1;
-                if(bottom && left && count[yyy][xxx] > num){
+                if (Main.map[yyy][xxx] != 1 && right && count[yyy][xxx] > num) {
                     count[yyy][xxx] = num;
                     newx.add(xxx);
                     newy.add(yyy);
@@ -156,15 +170,7 @@ public class PlayGame implements Runnable{
                 /////////////////////// bottom middle 7
                 xxx = xdone.get(i);
                 yyy = ydone.get(i) + 1;
-                if(bottom && count[yyy][xxx] > num){
-                    count[yyy][xxx] = num;
-                    newx.add(xxx);
-                    newy.add(yyy);
-                }
-                ///////////////////////bottom right 8
-                xxx = xdone.get(i) + 1;
-                yyy = ydone.get(i) + 1;
-                if(bottom && right && count[yyy][xxx] > num){
+                if (Main.map[yyy][xxx] != 1 && bottom && count[yyy][xxx] > num) {
                     count[yyy][xxx] = num;
                     newx.add(xxx);
                     newy.add(yyy);
@@ -177,22 +183,22 @@ public class PlayGame implements Runnable{
 
         // count map has been made now
 
-        int dir = 0;//target direction 0=top, 1=right, 2=bottom, 3=left
+//        int dir = 0;//target direction 0=top, 1=right, 2=bottom, 3=left
         int score = 10000;//how good is this move
 
-        if(Main.playerY > 0 && count[Main.playerY - 1][Main.playerX] < score){
+        if(Main.playerY > 0 &&Main.map[Main.playerY - 1][Main.playerX] != 1&&  count[Main.playerY - 1][Main.playerX] < score){
             dir = 0;
             score = count[Main.playerY - 1][Main.playerX];
         }
-        if(Main.playerX < Main.FIELD_SIZE_X - 1 && count[Main.playerY][Main.playerX + 1] < score){
+        if(Main.playerX < Main.FIELD_SIZE_X - 1 &&Main.map[Main.playerY ][Main.playerX + 1] != 1&&  count[Main.playerY][Main.playerX + 1] < score){
             dir = 1;
             score = count[Main.playerY][Main.playerX + 1];
         }
-        if(Main.playerY < Main.FIELD_SIZE_Y - 1 && count[Main.playerY + 1][Main.playerX] < score){
+        if(Main.playerY < Main.FIELD_SIZE_Y - 1 && Main.map[Main.playerY + 1][Main.playerX] != 1&& count[Main.playerY + 1][Main.playerX] < score){
             dir = 2;
             score = count[Main.playerY + 1][Main.playerX];
         }
-        if(Main.playerX > 0 && count[Main.playerY][Main.playerX - 1] < score){
+        if(Main.playerX > 0 &&Main.map[Main.playerY][Main.playerX - 1] != 1&&  count[Main.playerY][Main.playerX - 1] < score){
             dir = 3;
             score = count[Main.playerY][Main.playerX - 1];
         }

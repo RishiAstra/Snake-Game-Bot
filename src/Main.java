@@ -1,4 +1,6 @@
+import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -26,7 +28,7 @@ public class Main {
     private static Label click1, click2;
     private static Window overlayWindow;
     public static Thread playGameThread;
-    public static Thread updateMapThread;
+    public static Timer updateMapThread;
     public static void main(String[] args) {
         //setup a main window for organizational purposes.
         screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -41,9 +43,9 @@ public class Main {
             boundsWindow.setSize(width, height);
             boundsWindow.setAlwaysOnTop(true);
             boundsWindow.setVisible(true);
-            click1 = new Label("Click upper left corner of playfield");
-            click2 = new Label("Click lower right corner of playfield");
-            boundsWindow.add((click1));
+//            click1 = new Label("Click upper left corner of playfield");
+//            click2 = new Label("Click lower right corner of playfield");
+//            boundsWindow.add((click1));
             boundsWindow.addMouseListener(new MouseListen());
 
             Graphics boundsGraphics = boundsWindow.getGraphics();
@@ -63,19 +65,19 @@ public class Main {
                 x = e.getX();
                 y = e.getY();
                 click1done = true;
-                boundsWindow.remove(click1);
-                boundsWindow.add(click2);
+//                boundsWindow.remove(click1);
+//                boundsWindow.add(click2);
             }else if (!click2done){
                 w = e.getX() - x;
                 h = e.getY() - y;
                 click2done = true;
                 readyForClicks = false;
-                boundsWindow.remove(click2);
+//                boundsWindow.remove(click2);
                 SetupPlay();
                 playGameThread = new Thread(new PlayGame());
                 playGameThread.start();
-                updateMapThread = new Thread(new UpdateMap());
-                updateMapThread.run();
+                updateMapThread = new Timer(30, new UpdateMap());
+                updateMapThread.start();
             }
         }
 

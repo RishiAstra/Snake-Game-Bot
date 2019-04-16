@@ -8,7 +8,7 @@ public class MapPanel extends JPanel {
     }
     @Override
     public void paintComponent(Graphics g){
-        System.out.println("drew");
+//        System.out.println("drew");
         super.paintComponent(g);
         for(int yy = 0;yy < Main.FIELD_SIZE_Y;yy++){
             for(int xx = 0;xx < Main.FIELD_SIZE_X;xx++){

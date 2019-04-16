@@ -3,7 +3,7 @@ import java.awt.*;
 public class MapFrame extends JFrame {
     public MapFrame(){
         super();
-        setSize(Main.FIELD_SIZE_X * 20, Main.FIELD_SIZE_Y * 20);
+        setSize(Main.FIELD_SIZE_X * 20 + 50, Main.FIELD_SIZE_Y * 20 + 50);
         setTitle("Map");
         setVisible(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
