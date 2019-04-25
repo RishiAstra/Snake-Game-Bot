@@ -42,17 +42,35 @@ public class PlayGame implements Runnable{
                 int avgG = 0;
                 int avgB = 0;
                 int[] pixels = img.getRGB((int)Math.floor(xx * Main.w / Main.FIELD_SIZE_X), (int)Math.floor(yy * Main.h / Main.FIELD_SIZE_Y), stepx, stepy, null, 0, stepx);
+                double sizeMult = 0.2;//sample only middle 50% of pixels
+                int sizeX = (int)Math.floor(Main.w / (double)Main.FIELD_SIZE_X * sizeMult);//stepx * sizeMult);
+                int sizeY = (int)Math.floor(Main.h / (double)Main.FIELD_SIZE_Y * sizeMult);//stepy * sizeMult);
+                int xTemp = (int)Math.floor((xx + (1-sizeMult)/2) * Main.w / (double)Main.FIELD_SIZE_X);
+                int yTemp = (int)Math.floor((yy + (1-sizeMult)/2) * Main.h / (double)Main.FIELD_SIZE_Y);
+                int[] pixels1 = img.getRGB(xTemp, yTemp, sizeX, sizeY, null, 0, sizeX);
+
                 int samples = 0;
+                int blueNum = 0;
+
                 for(int i = 0;i < pixels.length;i++){//=Math.round(pixels.length/SAMPLES_PER_GRID)){
                     Color temp = new Color(pixels[i]);
                     avgR += temp.getRed();
                     avgG += temp.getGreen();
-                    avgB += temp.getBlue();
+//                    avgB += temp.getBlue();
                     samples++;
+                }
+                for(int i = 0;i < pixels1.length;i++){//=Math.round(pixels.length/SAMPLES_PER_GRID)){
+                    Color temp = new Color(pixels1[i]);
+//                    avgR += temp.getRed();
+//                    avgG += temp.getGreen();
+                    if(temp.getBlue() > temp.getGreen()){
+                        blueNum++;
+                    }
+//                    avgB += temp.getBlue();
                 }
                 avgR = Math.round(avgR/(float)samples);
                 avgG = Math.round(avgG/(float)samples);
-                avgB = Math.round(avgB/(float)samples);
+                avgB = (blueNum / pixels1.length > 0.2) ? 255:0;//Math.round(avgB/(float)samples1);//blue needs different test
 //                int min = avgR;
 //                if(avgG < min) min = avgG;
 //                if(avgB < min) min = avgB;
@@ -104,7 +122,7 @@ public class PlayGame implements Runnable{
     public static void Move(){
         rx = 10;
         ry = 10;
-        int done = 0;
+        int done = 1;
 
         for(int yy = 0;yy < Main.FIELD_SIZE_Y;yy++){
             for(int xx = 0;xx < Main.FIELD_SIZE_X;xx++){
@@ -133,6 +151,10 @@ public class PlayGame implements Runnable{
         xdone.add(rx);
         ydone.add(ry);
         while(done < Main.FIELD_SIZE_X * Main.FIELD_SIZE_Y) {
+            if(xdone.size() == 0){
+                System.err.println("PlayGame infinite loop xdone.size() = 0");
+                break;
+            }
             ArrayList<Integer> newx = new ArrayList<Integer>();
             ArrayList<Integer> newy = new ArrayList<Integer>();
             for (int i = 0; i < xdone.size(); i++) {
@@ -145,7 +167,7 @@ public class PlayGame implements Runnable{
                 /////////////////////// top middle 2
                 int xxx = xdone.get(i);
                 int yyy = ydone.get(i) - 1;
-                if (Main.map[yyy][xxx] != 1 && top && count[yyy][xxx] > num) {
+                if (top && Main.map[yyy][xxx] != 1 && count[yyy][xxx] > num) {
                     count[yyy][xxx] = num;
                     newx.add(xxx);
                     newy.add(yyy);
@@ -154,7 +176,7 @@ public class PlayGame implements Runnable{
                 /////////////////////// middle left 4
                 xxx = xdone.get(i) - 1;
                 yyy = ydone.get(i);
-                if (Main.map[yyy][xxx] != 1 && left && count[yyy][xxx] > num) {
+                if (left && Main.map[yyy][xxx] != 1 && count[yyy][xxx] > num) {
                     count[yyy][xxx] = num;
                     newx.add(xxx);
                     newy.add(yyy);
@@ -162,7 +184,7 @@ public class PlayGame implements Runnable{
                 /////////////////////// middle right 5
                 xxx = xdone.get(i) + 1;
                 yyy = ydone.get(i);
-                if (Main.map[yyy][xxx] != 1 && right && count[yyy][xxx] > num) {
+                if (right && Main.map[yyy][xxx] != 1 && count[yyy][xxx] > num) {
                     count[yyy][xxx] = num;
                     newx.add(xxx);
                     newy.add(yyy);
@@ -170,7 +192,7 @@ public class PlayGame implements Runnable{
                 /////////////////////// bottom middle 7
                 xxx = xdone.get(i);
                 yyy = ydone.get(i) + 1;
-                if (Main.map[yyy][xxx] != 1 && bottom && count[yyy][xxx] > num) {
+                if (bottom && Main.map[yyy][xxx] != 1 && count[yyy][xxx] > num) {
                     count[yyy][xxx] = num;
                     newx.add(xxx);
                     newy.add(yyy);
@@ -182,6 +204,7 @@ public class PlayGame implements Runnable{
         }
 
         // count map has been made now
+//TODO: not moving in right direction for no reason?
 
 //        int dir = 0;//target direction 0=top, 1=right, 2=bottom, 3=left
         int score = 10000;//how good is this move
