@@ -8,7 +8,7 @@ public class Test extends JPanel{
         frame.add(new Test());
         frame.setSize(Main.FIELD_SIZE_X * 20 + 200, Main.FIELD_SIZE_Y * 20 + 200);
         frame.setVisible(true);
-//        frame.setAlwaysOnTop(true);
+        frame.setAlwaysOnTop(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 

@@ -45,9 +45,9 @@ public class PlayGame implements Runnable{
                 double sizeMult = 0.2;//sample only middle 50% of pixels
                 int sizeX = (int)Math.floor(Main.w / (double)Main.FIELD_SIZE_X * sizeMult);//stepx * sizeMult);
                 int sizeY = (int)Math.floor(Main.h / (double)Main.FIELD_SIZE_Y * sizeMult);//stepy * sizeMult);
-                int xTemp = (int)Math.floor((xx + (1-sizeMult)/2) * Main.w / (double)Main.FIELD_SIZE_X);
-                int yTemp = (int)Math.floor((yy + (1-sizeMult)/2) * Main.h / (double)Main.FIELD_SIZE_Y);
-                int[] pixels1 = img.getRGB(xTemp, yTemp, sizeX, sizeY, null, 0, sizeX);
+//                int xTemp = (int)Math.floor((xx + (1-sizeMult)/2) * Main.w / (double)Main.FIELD_SIZE_X);
+//                int yTemp = (int)Math.floor((yy + (1-sizeMult)/2) * Main.h / (double)Main.FIELD_SIZE_Y);
+//                int[] pixels1 = img.getRGB(xTemp, yTemp, sizeX, sizeY, null, 0, sizeX);
 
                 int samples = 0;
                 int blueNum = 0;
@@ -59,8 +59,8 @@ public class PlayGame implements Runnable{
 //                    avgB += temp.getBlue();
                     samples++;
                 }
-                for(int i = 0;i < pixels1.length;i++){//=Math.round(pixels.length/SAMPLES_PER_GRID)){
-                    Color temp = new Color(pixels1[i]);
+                for(int i = 0;i < pixels.length;i++){//=Math.round(pixels.length/SAMPLES_PER_GRID)){
+                    Color temp = new Color(pixels[i]);
 //                    avgR += temp.getRed();
 //                    avgG += temp.getGreen();
                     if(temp.getBlue() > temp.getGreen()){
@@ -70,7 +70,7 @@ public class PlayGame implements Runnable{
                 }
                 avgR = Math.round(avgR/(float)samples);
                 avgG = Math.round(avgG/(float)samples);
-                avgB = (blueNum / pixels1.length > 0.2) ? 255:0;//Math.round(avgB/(float)samples1);//blue needs different test
+                avgB = blueNum / (float)pixels.length > 0.15 ? 255:0;//Math.round(avgB/(float)samples1);//blue needs different test
 //                int min = avgR;
 //                if(avgG < min) min = avgG;
 //                if(avgB < min) min = avgB;
@@ -94,7 +94,7 @@ public class PlayGame implements Runnable{
                 if(avgB > avgG){
                     type = 1;
                 }
-                if(avgR > avgB && avgR > avgG){
+                if(avgR > 120 && avgR > avgG){
                     type = 2;
                 }
                 Main.map[yy][xx] = type;
