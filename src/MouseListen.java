@@ -1,6 +1,9 @@
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+/**
+ * Listens to mouse events, calls Main.MouseClicked();
+ */
 public class MouseListen implements MouseListener {
     @Override
     public void mouseClicked(MouseEvent e) {
