@@ -97,6 +97,13 @@ public class PlayGame implements Runnable{
      * @param updateOldMap should the old map be updated?
      */
     public static void readPlayingField(boolean updateOldMap){
+        if(updateOldMap){
+            for(int yy = 0; yy < FIELD_SIZE_Y;yy++){
+                for(int xx = 0; xx < FIELD_SIZE_X;xx++) {
+                    oldMap[yy][xx] = map[yy][xx];
+                }
+            }
+        }
 
         BufferedImage img = robot.createScreenCapture(new Rectangle(x, y, w, h));
         int stepx = (int)Math.floor(((double)w)/FIELD_SIZE_X);
@@ -126,7 +133,7 @@ public class PlayGame implements Runnable{
 
                 avgR = Math.round(avgR/(float)samples);
                 avgG = Math.round(avgG/(float)samples);
-                double threshold = playerPos[yy][xx] == 0 ? 0.35 : 0.35 - 0.2 * playerPos[yy][xx] / (double)playerPos[endY][endX];
+                double threshold = playerPos[yy][xx] == 0 ? 0.5 : 0.5 - 0.3 * (snakeLength-playerPos[yy][xx]) / snakeLength;
                 avgB = blueNum / (float)pixels.length > threshold ? 255:0;
                 type = 0;
                 if(avgB > avgG){
@@ -140,13 +147,7 @@ public class PlayGame implements Runnable{
         }
         UpdatePlayer();
 
-        if(updateOldMap){
-            for(int yy = 0; yy < FIELD_SIZE_Y;yy++){
-                for(int xx = 0; xx < FIELD_SIZE_X;xx++) {
-                    oldMap[yy][xx] = map[yy][xx];
-                }
-            }
-        }
+
 //        System.out.println("Read map");
     }
 
@@ -273,7 +274,7 @@ public class PlayGame implements Runnable{
                 if(map[yy][xx] == 1 && oldMap[yy][xx] != 1){
                     playerX = xx;
                     playerY = yy;
-                    playerPos[yy][xx] = snakeLength;
+                    playerPos[yy][xx] = snakeLength + 1;
                     if(oldMap[yy][xx] == 2) {
                         snakeLength++;
                     }else{

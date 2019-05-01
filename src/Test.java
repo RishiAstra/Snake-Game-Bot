@@ -12,7 +12,7 @@ public class Test extends JPanel{
 //        fps = new ArrayList<Integer>();
         frame = new JFrame("Map");
         frame.add(new Test());
-        frame.setSize(PlayGame.FIELD_SIZE_X * 20 + 200, PlayGame.FIELD_SIZE_Y * 20 + 200);
+        frame.setSize(PlayGame.FIELD_SIZE_X * 20 + 200, PlayGame.FIELD_SIZE_Y * 20 + 250);
         frame.setVisible(true);
         frame.setAlwaysOnTop(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -52,6 +52,7 @@ public class Test extends JPanel{
             int displayThis = Math.round(1000/(total/(float)fps.size()));
             g.drawString(Integer.toString(displayThis), 100, PlayGame.FIELD_SIZE_Y * 20 + 150);
         }
+        g.drawString(Integer.toString(PlayGame.snakeLength), 100, PlayGame.FIELD_SIZE_Y * 20 + 165);
 
 
 
