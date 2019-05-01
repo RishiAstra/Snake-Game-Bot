@@ -1,16 +1,18 @@
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-
+//TODO: make snake update higher number means toward end
 /**
- * Includes the main gameplay.
+ * Includes the main game play.
  */
 public class PlayGame implements Runnable{
+    public static final int FPS = 20;
     public static final int FIELD_SIZE_X = 17;
     public static final int FIELD_SIZE_Y = 15;
 
     public static int[][] map = new int[FIELD_SIZE_Y][FIELD_SIZE_X];
     public static int[][] oldMap = new int[FIELD_SIZE_Y][FIELD_SIZE_X];
+    public static int[][] playerPos = new int[FIELD_SIZE_Y][FIELD_SIZE_X];
     public static int[][] count = new int[FIELD_SIZE_Y][FIELD_SIZE_X];
     public static int rx;
     public static int ry;
@@ -18,40 +20,72 @@ public class PlayGame implements Runnable{
     public static int moveCount;
     public static int playerX = 3;
     public static int playerY = 7;
+    public static int endX;
+    public static int endY;
+    public static int snakeLength = 2;
     public static Robot robot;
     public static int x;
     public static int y;
     public static int w;
     public static int h;
 
+
+    public static long previousTime;
+    public static long currentTime;
+    public static int dead;
+
     /**
      * Runs the bot
      */
     @Override
     public void run(){
+        previousTime = System.nanoTime();
+        currentTime = previousTime + 1000;
         x = Main.x;
         y = Main.y;
         w = Main.w;
         h = Main.h;
+
+        playerPos[playerY][playerX] = 2;
+        playerPos[playerY][playerX - 1] = 1;
+
         try{
             robot = new Robot();
         }catch( Exception e){
             System.err.println(e.getStackTrace());
         }
         while(true){
+            previousTime = currentTime;
+            currentTime = System.nanoTime();
             try{
+                long startTime = System.nanoTime();
+
                 readPlayingField(true);
-                for(int yy = 0; yy < FIELD_SIZE_Y;yy++){
-                    for(int xx = 0; xx < FIELD_SIZE_X;xx++) {
-                        if(map[yy][xx] == 2 && oldMap[yy][xx] != 2){
+                boolean isDead = false;
+                for(int yy = 0; yy < FIELD_SIZE_Y;yy++) {
+                    for (int xx = 0; xx < FIELD_SIZE_X; xx++) {
+                        if (map[yy][xx] == 2 && oldMap[yy][xx] != 2) {
                             playerX = xx;
                             playerY = yy;
                         }
+                        if (map[yy][xx] != oldMap[yy][xx]) isDead = false;
                     }
+                }
+                if(dead > FPS){//not moved in 1 second
+                    System.err.println("dead");
+                    break;
                 }
                 Move();
                 moveCount++;
-                Thread.sleep(30);
+                long endTime = System.nanoTime();
+                double diff = (endTime - startTime)/1000000000;
+                double target  = 1.0/FPS;
+                double delta = target - diff;
+                if(delta < 0){
+                    System.err.println("Frame took a long time");
+                }else{
+                    Thread.sleep((long)(delta / 1000));
+                }
             }catch (Exception ee){
                 ee.printStackTrace();
             }
@@ -70,11 +104,10 @@ public class PlayGame implements Runnable{
         for(int yy = 0; yy < FIELD_SIZE_Y;yy++){
             for(int xx = 0; xx < FIELD_SIZE_X;xx++){
                 int type = 0;
-                int avgR = 0;
-                int avgG = 0;
-                int avgB = 0;
+                int avgR  = 0;
+                int avgG  = 0;
+                int avgB  = 0;
                 int[] pixels = img.getRGB((int)Math.floor(xx * w / FIELD_SIZE_X), (int)Math.floor(yy * h / FIELD_SIZE_Y), stepx, stepy, null, 0, stepx);
-                double sizeMult = 0.2;//sample only middle 50% of pixels
                 int samples = 0;
                 int blueNum = 0;
 
@@ -93,7 +126,8 @@ public class PlayGame implements Runnable{
 
                 avgR = Math.round(avgR/(float)samples);
                 avgG = Math.round(avgG/(float)samples);
-                avgB = blueNum / (float)pixels.length > 0.15 ? 255:0;
+                double threshold = playerPos[yy][xx] == 0 ? 0.35 : 0.35 - 0.2 * playerPos[yy][xx] / (double)playerPos[endY][endX];
+                avgB = blueNum / (float)pixels.length > threshold ? 255:0;
                 type = 0;
                 if(avgB > avgG){
                     type = 1;
@@ -104,14 +138,7 @@ public class PlayGame implements Runnable{
                 map[yy][xx] = type;
             }
         }
-        for(int yy = 0; yy < FIELD_SIZE_Y;yy++){
-            for(int xx = 0; xx < FIELD_SIZE_X;xx++) {
-                if(map[yy][xx] == 1 && oldMap[yy][xx] != 1){
-                    playerX = xx;
-                    playerY = yy;
-                }
-            }
-        }
+        UpdatePlayer();
 
         if(updateOldMap){
             for(int yy = 0; yy < FIELD_SIZE_Y;yy++){
@@ -237,5 +264,32 @@ public class PlayGame implements Runnable{
         if(dir == 1) robot.keyPress(39);
         if(dir == 2) robot.keyPress(40);
         if(dir == 3) robot.keyPress(37);
+    }
+
+    public static void UpdatePlayer(){
+        boolean reducePlayerPos = false;
+        for(int yy = 0; yy < FIELD_SIZE_Y;yy++){
+            for(int xx = 0; xx < FIELD_SIZE_X;xx++) {
+                if(map[yy][xx] == 1 && oldMap[yy][xx] != 1){
+                    playerX = xx;
+                    playerY = yy;
+                    playerPos[yy][xx] = snakeLength;
+                    if(oldMap[yy][xx] == 2) {
+                        snakeLength++;
+                    }else{
+                        reducePlayerPos = true;
+                    }
+                }
+            }
+        }
+        if(reducePlayerPos){
+            for(int yy = 0; yy < FIELD_SIZE_Y;yy++){
+                for(int xx = 0; xx < FIELD_SIZE_X;xx++) {
+                    if(playerPos[yy][xx] != 0){
+                        playerPos[yy][xx]--;
+                    }
+                }
+            }
+        }
     }
 }
