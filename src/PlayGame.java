@@ -133,7 +133,7 @@ public class PlayGame implements Runnable{
 
                 avgR = Math.round(avgR/(float)samples);
                 avgG = Math.round(avgG/(float)samples);
-                double threshold = playerPos[yy][xx] == 0 ? 0.5 : 0.5 - 0.3 * (snakeLength-playerPos[yy][xx]) / snakeLength;
+                double threshold = playerPos[yy][xx] == 0 ? 0.3 : 0.3 - 0.15 * (snakeLength-playerPos[yy][xx]) / snakeLength;
                 avgB = blueNum / (float)pixels.length > threshold ? 255:0;
                 type = 0;
                 if(avgB > avgG){
