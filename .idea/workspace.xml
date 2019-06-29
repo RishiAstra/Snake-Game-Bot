@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="ef5434d6-e998-4265-9896-2535ff5ee54c" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/PlayGame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/PlayGame.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -56,8 +55,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/PlayGame.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="176">
-              <caret line="76" column="43" lean-forward="true" selection-start-line="75" selection-start-column="30" selection-end-line="76" selection-end-column="43" />
+            <state relative-caret-position="389">
+              <caret line="96" selection-start-line="96" selection-end-line="96" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#6115#6124#0" expanded="true" />
@@ -136,7 +135,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1561770639314" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1561770807681" />
     <property name="last_opened_file_path" value="C:/Program Files/Git/bin/git.exe" />
     <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.15" />
@@ -206,7 +205,7 @@
       <window_info id="Learn" order="6" />
       <window_info id="Favorites" order="7" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info active="true" anchor="bottom" id="Find" order="1" visible="true" weight="0.32822478" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32822478" />
       <window_info anchor="bottom" id="Run" order="2" weight="0.33152762" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.39846742" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
@@ -279,8 +278,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/PlayGame.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="176">
-          <caret line="76" column="43" lean-forward="true" selection-start-line="75" selection-start-column="30" selection-end-line="76" selection-end-column="43" />
+        <state relative-caret-position="389">
+          <caret line="96" selection-start-line="96" selection-end-line="96" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#6115#6124#0" expanded="true" />
