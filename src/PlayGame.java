@@ -19,7 +19,7 @@ public class PlayGame implements Runnable{
     public static int rx;
     public static int ry;
     public static int dir;
-    public static boolean eatapple = false;
+    public static int eatapple = 0;
     public static int ex = 0;
     public static int ey = 0;
     public static int pdir;
@@ -73,8 +73,8 @@ public class PlayGame implements Runnable{
                 for(int yy = 0; yy < FIELD_SIZE_Y;yy++) {
                     for (int xx = 0; xx < FIELD_SIZE_X; xx++) {
                         if (map[yy][xx] == 2 && oldMap[yy][xx] != 2) {
-                            playerX = xx;
-                            playerY = yy;
+//                            playerX = xx;
+//                            playerY = yy;
                         }
                         if (map[yy][xx] != oldMap[yy][xx]) isDead = false;
                     }
@@ -301,16 +301,17 @@ public class PlayGame implements Runnable{
                     boolean yes = false;
                     if(oldMap[yy][xx] == 2) {
                         snakeLength++;
-                        eatapple = true;
+                        eatapple = 3;
                         ex = xx;
                         ey = yy;
                         yes = true;
                     }else{
-                        if(eatapple){
+                        if(eatapple > 0){
                             if(xx == playerX + 1 || xx == playerX -1 || yy == playerY + 1 || yy == playerY - 1) {
                                 yes = true;
-                                eatapple = false;
                             }
+                            eatapple--;
+
                         }else{
                             yes = true;
                         }
