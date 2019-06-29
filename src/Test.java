@@ -30,10 +30,10 @@ public class Test extends JPanel{
                 g.fillRect(xx * 20 + 100, yy * 20 + 100, 20, 20);
                 if(PlayGame.map[yy][xx] == 1){
                     g.setColor(Color.magenta);
-                    g.drawString(Integer.toString(PlayGame.playerPos[yy][xx]), xx * 20 + 100 + 5, yy * 20 + 110 + 5);
+                    g.drawString(Integer.toString(PlayGame.bluenums[yy][xx]), xx * 20 + 100 + 5, yy * 20 + 110 + 5);
                 }else{
                     g.setColor(Color.black);
-                    g.drawString(Integer.toString(PlayGame.count[yy][xx]), xx * 20 + 100 + 5, yy * 20 + 110 + 5);
+                    g.drawString(Integer.toString(PlayGame.bluenums[yy][xx]), xx * 20 + 100 + 5, yy * 20 + 110 + 5);
                 }
 //                g.drawRect(xx * 20 + 25, yy * 20 + 25, 20, 20);
             }
@@ -43,6 +43,7 @@ public class Test extends JPanel{
         g.setColor(Color.black);
         g.drawString(Integer.toString(PlayGame.dir), 100, PlayGame.FIELD_SIZE_Y * 20 + 120);
         g.drawString(Integer.toString(PlayGame.moveCount), 100, PlayGame.FIELD_SIZE_Y * 20 + 135);
+        g.drawString(Integer.toString(PlayGame.stepx), 100, PlayGame.FIELD_SIZE_Y * 20 + 185);
         if(fps != null){
             int fpsThisFrame = (int)Math.round(1000000000.0/(PlayGame.currentTime-PlayGame.previousTime));
             fps.add(fpsThisFrame);
