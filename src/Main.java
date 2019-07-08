@@ -45,7 +45,7 @@ public class Main {
             boundsGraphics.drawImage(boundsScreenshot, 0, 0, width, height, boundsWindow);
             readyForClicks = true;
         }catch(Exception e){
-            System.out.println(e);
+            e.printStackTrace();
         }
     }
 

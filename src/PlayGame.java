@@ -10,6 +10,8 @@ public class PlayGame implements Runnable{
     public static final int FIELD_SIZE_X = 17;
     public static final int FIELD_SIZE_Y = 15;
 
+    public static ArrayList<int[][]> history;
+    public static int historyLength = 10;
     public static int[][] map = new int[FIELD_SIZE_Y][FIELD_SIZE_X];
     public static int[][] bluenums = new int[FIELD_SIZE_Y][FIELD_SIZE_X];
 
@@ -60,8 +62,10 @@ public class PlayGame implements Runnable{
         try{
             robot = new Robot();
         }catch( Exception e){
-            System.err.println(e.getStackTrace());
+            e.printStackTrace();
         }
+        Test.historyIndex = 0;//set history to current map, don't view history by default
+        history = new ArrayList<>();
         while(true){
             previousTime = currentTime;
             currentTime = System.nanoTime();
@@ -105,11 +109,21 @@ public class PlayGame implements Runnable{
      * @param updateOldMap should the old map be updated?
      */
     public static void readPlayingField(boolean updateOldMap){
+        boolean changed = false;
         if(updateOldMap){
             for(int yy = 0; yy < FIELD_SIZE_Y;yy++){
                 for(int xx = 0; xx < FIELD_SIZE_X;xx++) {
                     oldMap[yy][xx] = map[yy][xx];
+                    changed = true;
                 }
+            }
+        }
+        if(changed){
+            history.add(map);
+            if(history.size() > historyLength){
+                history.remove(0);
+            }else{
+                Test.historyIndex++;
             }
         }
 
@@ -156,7 +170,7 @@ public class PlayGame implements Runnable{
 
                 avgR = Math.round(avgR/(float)samples);
                 avgG = Math.round(avgG/(float)samples);
-                double threshold = 0.3;//playerPos[yy][xx] == 0 ? 0.3 : 0.3;// - 0.3 * (snakeLength-playerPos[yy][xx]) / snakeLength;
+                double threshold = 0.4;//playerPos[yy][xx] == 0 ? 0.3 : 0.3;// - 0.3 * (snakeLength-playerPos[yy][xx]) / snakeLength;
                 avgB = blueNum / (float)samples > threshold ? 255:0;
                 type = 0;
                 if(avgB > avgG){
@@ -168,6 +182,8 @@ public class PlayGame implements Runnable{
                 map[yy][xx] = type;
             }
         }
+
+
         UpdatePlayer();
 
 
