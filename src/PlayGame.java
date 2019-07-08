@@ -18,7 +18,7 @@ public class PlayGame implements Runnable{
     public static int[][] count = new int[FIELD_SIZE_Y][FIELD_SIZE_X];
     public static int rx;
     public static int ry;
-    public static int dir;
+    public static int dir = 1;
     public static int eatapple = 0;
     public static int ex = 0;
     public static int ey = 0;
@@ -306,14 +306,15 @@ public class PlayGame implements Runnable{
                         ey = yy;
                         yes = true;
                     }else{
+                        if(xx == playerX + 1 || xx == playerX -1 || yy == playerY + 1 || yy == playerY - 1) {
+                            yes = true;
+                        }
                         if(eatapple > 0){
-                            if(xx == playerX + 1 || xx == playerX -1 || yy == playerY + 1 || yy == playerY - 1) {
-                                yes = true;
-                            }
+
                             eatapple--;
 
                         }else{
-                            yes = true;
+//                            yes = true;
                         }
 
                     }
