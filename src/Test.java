@@ -19,7 +19,7 @@ public class Test extends JPanel{
         frame.setAlwaysOnTop(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        hisDown = new Button("<");
+        hisDown = new Button("<");//TODO: draw these, when pressed change historyIndex
         hisUp = new Button(">");
     }
 
